@@ -1,0 +1,102 @@
+{
+  "name": "5 Dakikada Bir Otomatik GitHub Yedekleme",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 5
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [0, 0],
+      "id": "schedule",
+      "name": "Her 5 Dakikada Bir"
+    },
+    {
+      "parameters": {
+        "resource": "workflow",
+        "operation": "getAll",
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [200, 0],
+      "id": "get-workflows",
+      "name": "n8n İş Akışlarını Çek",
+      "credentials": {
+        "n8nApi": {
+          "id": "",
+          "name": "n8n API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "method": "PUT",
+        "url": "={{ 'https://api.github.com/repos/dadasersin/google-calob-n8n-denemesi/contents/yedekler/' + $json.id + '.json' }}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "message",
+              "value": "={{ 'Otomatik n8n yedekleme: ' + $json.name }}"
+            },
+            {
+              "name": "content",
+              "value": "={{ Buffer.from(JSON.stringify($json, null, 2)).toString('base64') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [400, 0],
+      "id": "github-upload",
+      "name": "GitHub'a Direk Yükle (API)",
+      "credentials": {
+        "githubApi": {
+          "id": "",
+          "name": "GitHub API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Her 5 Dakikada Bir": {
+      "main": [
+        [
+          {
+            "node": "n8n İş Akışlarını Çek",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "n8n İş Akışlarını Çek": {
+      "main": [
+        [
+          {
+            "node": "GitHub'a Direk Yükle (API)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

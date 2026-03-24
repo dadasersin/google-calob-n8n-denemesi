@@ -1,0 +1,56 @@
+{
+  "name": "5 Dakikada Bir Tam Otomatik Yedekleme",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 5
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "schedule-trigger",
+      "name": "Her 5 Dakikada Çalışsın"
+    },
+    {
+      "parameters": {
+        "command": "git config --global user.email 'bot@n8n.com'\ngit config --global user.name 'Otomatik Bot'\nif [ ! -d /tmp/n8n_backup ]; then\n  git clone https://BURAYA_GITHUB_TOKEN_YAZIN@github.com/dadasersin/google-calob-n8n-denemesi.git /tmp/n8n_backup\nelse\n  cd /tmp/n8n_backup && git pull\nfi\ncd /tmp/n8n_backup\nmkdir -p yedekler\nn8n export:workflow --all --output=yedekler/\ngit add .\ngit commit -m 'Render Sisteminden Otomatik 5 Dk Yedeği'\ngit push origin master"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        240,
+        0
+      ],
+      "id": "execute-command",
+      "name": "GitHub'a Direk Gönder"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Her 5 Dakikada Çalışsın": {
+      "main": [
+        [
+          {
+            "node": "GitHub'a Direk Gönder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
