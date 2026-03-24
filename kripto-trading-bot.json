@@ -1,0 +1,132 @@
+{
+  "name": "Kripto Trading Bot (Binance & TradingView)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "webhook",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        200
+      ],
+      "id": "webhook-node",
+      "name": "TradingView Webhook",
+      "webhookId": "kripto-bot-webhook-1234"
+    },
+    {
+      "parameters": {
+        "dataType": "string",
+        "value1": "={{ $json.body.message }}",
+        "rules": {
+          "rules": [
+            {
+              "value2": "BUY",
+              "output": 0
+            },
+            {
+              "value2": "SELL",
+              "output": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [
+        240,
+        200
+      ],
+      "id": "switch-node",
+      "name": "Sinyal Türü (BUY/SELL)"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "symbol": "BTCUSDT",
+        "side": "BUY",
+        "type": "MARKET",
+        "quantity": 0.001,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.binance",
+      "typeVersion": 1,
+      "position": [
+        500,
+        80
+      ],
+      "id": "binance-buy",
+      "name": "Binance ALIM (BUY)",
+      "credentials": {
+        "binanceApi": {
+          "id": "",
+          "name": "Binance hesabım"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "symbol": "BTCUSDT",
+        "side": "SELL",
+        "type": "MARKET",
+        "quantity": 0.001,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.binance",
+      "typeVersion": 1,
+      "position": [
+        500,
+        320
+      ],
+      "id": "binance-sell",
+      "name": "Binance SATIM (SELL)",
+      "credentials": {
+        "binanceApi": {
+          "id": "",
+          "name": "Binance hesabım"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "TradingView Webhook": {
+      "main": [
+        [
+          {
+            "node": "Sinyal Türü (BUY/SELL)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sinyal Türü (BUY/SELL)": {
+      "main": [
+        [
+          {
+            "node": "Binance ALIM (BUY)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Binance SATIM (SELL)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
