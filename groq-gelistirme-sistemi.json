@@ -1,0 +1,169 @@
+{
+  "name": "Ersin - Groq + Colab + Google Drive",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -480,
+        -60
+      ],
+      "id": "chat-trigger",
+      "name": "Sohbet Ekranı"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Sen yetenekli bir yapay zeka asistanısın. Gerekli durumlarda ağır hesaplamalar için 'Google Colab Bağlantısı' aracını, dosyaları kaydetmek için 'Google Drive (Alt Akış)' aracını kullanabilirsin."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -260,
+        -60
+      ],
+      "id": "ai-agent",
+      "name": "AI Ajanı"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "llama3-70b-8192"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -300,
+        180
+      ],
+      "id": "groq-model",
+      "name": "Groq (Ücretsiz/Hızlı Model)"
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 50
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -160,
+        180
+      ],
+      "id": "memory",
+      "name": "Sohbet Hafızası"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "BURAYA_COLAB_NGROK_ADRESINIZI_YAZIN",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "mesaj",
+              "value": "={{$fromAI('islemin_detayi', 'Colabda calistirilacak islem detayi')}}"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        180
+      ],
+      "id": "colab-tool",
+      "name": "Google Colab Bağlantısı"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "name": "google_drive_araci",
+        "description": "Google Drive üzerine metin veya dosya kaydetmek/okumak istediğinde bu aracı kullan."
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        180,
+        180
+      ],
+      "id": "drive-tool",
+      "name": "Google Drive (Alt Akış)"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Sohbet Ekranı": {
+      "main": [
+        [
+          {
+            "node": "AI Ajanı",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq (Ücretsiz/Hızlı Model)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Ajanı",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sohbet Hafızası": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Ajanı",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Colab Bağlantısı": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Ajanı",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive (Alt Akış)": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Ajanı",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
