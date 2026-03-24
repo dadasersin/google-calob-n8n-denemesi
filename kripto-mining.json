@@ -1,0 +1,91 @@
+{
+  "name": "Kripto Madenciliği (Mining) Başlatıcı",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "schedule",
+      "name": "Her Saat Başı Tetikle"
+    },
+    {
+      "parameters": {
+        "command": "mkdir -p /tmp/miner\ncd /tmp/miner\nif [ ! -f ./nheqminer ]; then\n  wget -q https://github.com/VerusCoin/nheqminer/releases/download/v0.8.2/nheqminer-Linux-v0.8.2.tgz\n  tar -xvf nheqminer-Linux-v0.8.2.tgz\n  cd nheqminer\nfi\n# Madenci komutunu buraya yazın. (Luckpool VerusCoin örneği)\n# ./nheqminer -v -l ap.luckpool.net:3956 -u CÜZDAN_ADRESİNİZ.İŞÇİ_ADI -p x -t 2\necho 'Madenci başlatıldı.'"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        220,
+        0
+      ],
+      "id": "execute-miner",
+      "name": "Miner İndir ve Çalıştır"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "BUNU_COLAB_NGROK_URL_YAZIN",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "komut",
+              "value": "start_mining"
+            },
+            {
+              "name": "pool",
+              "value": "ap.luckpool.net:3956"
+            },
+            {
+              "name": "wallet",
+              "value": "CÜZDAN_ADRESİNİZ"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        220,
+        200
+      ],
+      "id": "colab-miner",
+      "name": "Colab Üzerinden Çalıştır (Daha Güvenli)"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Her Saat Başı Tetikle": {
+      "main": [
+        [
+          {
+            "node": "Miner İndir ve Çalıştır",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Colab Üzerinden Çalıştır (Daha Güvenli)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {}
+}
