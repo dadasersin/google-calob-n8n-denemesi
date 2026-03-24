@@ -8,5 +8,8 @@ ENV N8N_PORT=$PORT
 # Setting some defaults for Render
 ENV NODE_ENV=production
 ENV N8N_PROTOCOL=https
+ENV N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=false
+ENV NODES_EXCLUDE="[]"
+ENV N8N_NODES_EXCLUDE="[]"
 
 USER node
